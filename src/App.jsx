@@ -4121,12 +4121,15 @@ function AdminQuestions({ subjects, questions, setQuestions, s }) {
 
 // ══════════════════════════════════════════════════════════════
 export default function App() {
-  const [screen, setScreen] = useState("login");
+  // ── localStorage persistence ──
+  const savedUsers = (() => { try { const d = localStorage.getItem("capapp_users"); if (d) { const parsed = JSON.parse(d); return Array.isArray(parsed) && parsed.length ? parsed : DEMO_USERS; } } catch(e) {} return DEMO_USERS; })();
+  const savedUser = (() => { try { const d = localStorage.getItem("capapp_current_user"); if (d) return JSON.parse(d); } catch(e) {} return null; })();
+  const [screen, setScreen] = useState(savedUser ? "app" : "login");
   const [authMode, setAuthMode] = useState("login");
-  const [user, setUser] = useState(null);
-  const [users, setUsers] = useState(DEMO_USERS);
-  const [userStats, setUserStats] = useState({});
-  const [userDecks, setUserDecks] = useState({});
+  const [user, setUser] = useState(savedUser);
+  const [users, setUsers] = useState(savedUsers);
+  const [userStats, setUserStats] = useState(() => { try { const d = localStorage.getItem("capapp_userStats"); if (d) return JSON.parse(d); } catch(e) {} return {}; });
+  const [userDecks, setUserDecks] = useState(() => { try { const d = localStorage.getItem("capapp_userDecks"); if (d) return JSON.parse(d); } catch(e) {} return {}; });
   const [authEmail, setAuthEmail] = useState(""); const [authPass, setAuthPass] = useState("");
   const [authName, setAuthName] = useState(""); const [authYear, setAuthYear] = useState("1. Sınıf");
   const [authGroup, setAuthGroup] = useState("Grup A");
@@ -4198,6 +4201,12 @@ export default function App() {
   const [summaryLoading, setSummaryLoading] = useState(null);
   const stats = user ? (userStats[user.email]||initStats()) : initStats();
   const decks = user ? (userDecks[user.email]||[]) : [];
+
+  // ── Persist to localStorage ──
+  useEffect(() => { try { localStorage.setItem("capapp_users", JSON.stringify(users)); } catch(e) {} }, [users]);
+  useEffect(() => { try { if (user) localStorage.setItem("capapp_current_user", JSON.stringify(user)); else localStorage.removeItem("capapp_current_user"); } catch(e) {} }, [user]);
+  useEffect(() => { try { localStorage.setItem("capapp_userStats", JSON.stringify(userStats)); } catch(e) {} }, [userStats]);
+  useEffect(() => { try { localStorage.setItem("capapp_userDecks", JSON.stringify(userDecks)); } catch(e) {} }, [userDecks]);
 
   async function handleSummaryPdf(file) {
     if (!file || !summaryTarget) return;
