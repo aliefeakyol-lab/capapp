@@ -14,11 +14,6 @@ const NAV = [
 ];
 
 const ADMIN_NAV = [
-  { id:"admin_dashboard", label:"Genel Bakış", icon:"⊞" },
-  { id:"admin_subjects", label:"Konu ve Özetler", icon:"📋" },
-  { id:"admin_schedule", label:"Ders Programları", icon:"📅" },
-  { id:"admin_sources", label:"Kaynaklar", icon:"📁" },
-  { id:"admin_questions", label:"Test Soruları", icon:"✓" },
   { id:"admin_exams", label:"Sınav Tarihleri", icon:"🎯" },
   { id:"admin_anatomy", label:"Zilli Sınav", icon:"🦴" },
   { id:"admin_users", label:"Kullanıcılar", icon:"◉" },
@@ -4143,7 +4138,7 @@ export default function App() {
   const [sources, setSources] = useState(() => { try { const d = localStorage.getItem("capapp_sources"); if (d) return JSON.parse(d); } catch(e) {} return []; });
   const [questions, setQuestions] = useState(INIT_QUESTIONS);
   const [page, setPage] = useState("dashboard");
-  const [adminPage, setAdminPage] = useState("admin_dashboard");
+  const [adminPage, setAdminPage] = useState("admin_exams");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [examView, setExamView] = useState("menu");
   const [selectedExam, setSelectedExam] = useState(null);
@@ -4380,12 +4375,12 @@ export default function App() {
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div><p style={{ fontSize:12, color:"#94a3b8", margin:"0 0 8px", fontWeight:500 }}>Şifre</p>
             <input type="password" value={adminPass} onChange={e => setAdminPass(e.target.value)}
-              onKeyDown={e => { if (e.key==="Enter") { if (adminPass===ADMIN_PASSWORD) { setScreen("admin"); setAdminPage("admin_dashboard"); setAdminError(""); } else setAdminError("Hatalı şifre."); } }}
+              onKeyDown={e => { if (e.key==="Enter") { if (adminPass===ADMIN_PASSWORD) { setScreen("admin"); setAdminPage("admin_exams"); setAdminError(""); } else setAdminError("Hatalı şifre."); } }}
               placeholder="••••••••" style={{ width:"100%", padding:"12px 16px", borderRadius:12, border:"1px solid rgba(148,163,184,0.15)", background:"rgba(12,18,34,0.6)", color:"#e8edf5", fontSize:15, boxSizing:"border-box", outline:"none" }} />
           </div>
           {adminError && <p style={{ fontSize:13, color:"#ff5252", margin:0, padding:"8px 12px", background:"rgba(255,82,82,0.1)", borderRadius:8 }}>{adminError}</p>}
           <button style={{ width:"100%", padding:12, borderRadius:12, border:"none", background:"linear-gradient(135deg,#00d4aa,#00b894)", color:"#060a14", cursor:"pointer", fontSize:15, fontWeight:700, marginTop:4, boxShadow:"0 2px 12px rgba(0,212,170,0.25)" }}
-            onClick={() => { if (adminPass===ADMIN_PASSWORD) { setScreen("admin"); setAdminPage("admin_dashboard"); setAdminError(""); } else setAdminError("Hatalı şifre."); }}>Giriş Yap</button>
+            onClick={() => { if (adminPass===ADMIN_PASSWORD) { setScreen("admin"); setAdminPage("admin_exams"); setAdminError(""); } else setAdminError("Hatalı şifre."); }}>Giriş Yap</button>
           <button style={{ background:"transparent", border:"none", color:"#64748b", cursor:"pointer", fontSize:13, padding:0, textAlign:"left" }} onClick={() => setScreen("login")}>Kullanıcı girişine dön</button>
         </div>
       </div>
@@ -4425,173 +4420,6 @@ export default function App() {
           </div>
         </div>
         <div style={s.main}>
-          {adminPage==="admin_dashboard" && (
-            <>
-              <p style={s.title}>Genel Bakış</p>
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:28 }}>
-                {[["Kullanıcı",users.length],["Ders",subjects.length],["Konu",totalTopics],["Soru",questions.length]].map(([l,v]) => (
-                  <div key={l} style={s.metric}><p style={{ fontSize:28, fontWeight:800, margin:0, color:"#00d4aa" }}>{v}</p><p style={{ fontSize:12, color:"#94a3b8", margin:"4px 0 0" }}>{l}</p></div>
-                ))}
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
-                <div style={s.card}><p style={{ fontWeight:700, marginTop:0 }}>Dersler</p>{subjects.slice(0,8).map(sub => <div key={sub.id} style={{ display:"flex", justifyContent:"space-between", padding:"9px 0", borderBottom:"1px solid rgba(148,163,184,0.1)", fontSize:14 }}><div style={{ display:"flex", alignItems:"center", gap:8 }}><span style={{ width:10, height:10, borderRadius:"50%", background:sub.color, display:"inline-block" }}></span><span>{sub.name}</span></div><span style={s.tag}>{sub.sinif}</span></div>)}</div>
-                <div style={s.card}><p style={{ fontWeight:700, marginTop:0 }}>Son Sorular</p>{questions.slice(-4).reverse().map(q => <div key={q.id} style={{ padding:"9px 0", borderBottom:"1px solid rgba(148,163,184,0.1)", fontSize:13 }}><span style={{ ...s.tag, marginRight:6, fontSize:11 }}>{q.topic}</span><span style={{ color:"#94a3b8" }}>{q.q.slice(0,50)}...</span></div>)}</div>
-              </div>
-              <div style={{ ...s.card, marginTop:16 }}>
-                <p style={{ fontWeight:700, marginTop:0 }}>🤖 Yapay Zeka Motoru</p>
-                <p style={{ fontSize:12, color:"#94a3b8", margin:"0 0 10px" }}>PDF'den özet, flashcard ve soru üretimi için yerleşik AI kullanılmaktadır. Harici API anahtarına gerek yoktur.</p>
-                <div style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 14px", background:"rgba(0,212,170,0.08)", borderRadius:10, border:"1px solid rgba(0,212,170,0.2)" }}>
-                  <span style={{ fontSize:16 }}>✓</span>
-                  <span style={{ fontSize:13, color:"#00d4aa", fontWeight:600 }}>AI Motoru Aktif</span>
-                </div>
-              </div>
-            </>
-          )}
-          {adminPage==="admin_subjects" && (
-            <>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
-                <p style={{ ...s.title, margin:0 }}>Konu ve Özetler</p>
-                <button style={s.btn(true)} onClick={() => { setNewSubjectName(""); setNewSubjectColor("#00d4aa"); setNewSubjectSinif("1. Sınıf"); setEditingSubject("new"); }}>+ Yeni Ders</button>
-              </div>
-              {editingSubject==="new" && (
-                <div style={{ ...s.card, marginBottom:16, border:"1px solid rgba(0,212,170,0.3)" }}>
-                  <p style={{ fontWeight:700, marginTop:0 }}>Yeni Ders</p>
-                  <div style={{ display:"flex", gap:12, marginBottom:12, flexWrap:"wrap" }}>
-                    <input style={{ ...s.input, flex:2, minWidth:160 }} placeholder="Ders adı" value={newSubjectName} onChange={e => setNewSubjectName(e.target.value)} />
-                    <select style={{ ...s.input, flex:1, minWidth:120 }} value={newSubjectSinif} onChange={e => setNewSubjectSinif(e.target.value)}>{SINIFLAR.map(y => <option key={y}>{y}</option>)}</select>
-                    <div style={{ display:"flex", alignItems:"center", gap:8 }}><span style={{ fontSize:13, color:"#94a3b8" }}>Renk:</span><input type="color" value={newSubjectColor} onChange={e => setNewSubjectColor(e.target.value)} style={{ width:40, height:36, borderRadius:6, border:"1px solid rgba(148,163,184,0.15)", cursor:"pointer", padding:2 }} /></div>
-                  </div>
-                  <div style={{ display:"flex", gap:10 }}>
-                    <button style={s.btn(true)} onClick={() => { if (!newSubjectName.trim()) return; setSubjects(p => [...p,{ id:Date.now(), name:newSubjectName.trim(), color:newSubjectColor, sinif:newSubjectSinif, topics:[] }]); setEditingSubject(null); }}>Kaydet</button>
-                    <button style={s.btn(false)} onClick={() => setEditingSubject(null)}>İptal</button>
-                  </div>
-                </div>
-              )}
-              {SINIFLAR.map(sinif => {
-                const sinifSubs = subjects.filter(sb => sb.sinif===sinif);
-                if (sinifSubs.length===0) return null;
-                return (
-                  <div key={sinif} style={{ marginBottom:28 }}>
-                    <p style={{ fontWeight:700, fontSize:16, color:"#00d4aa", margin:"0 0 12px", borderBottom:"1px solid rgba(0,212,170,0.2)", paddingBottom:8 }}>{sinif} <span style={{ fontSize:12, color:"#64748b", fontWeight:400 }}>({sinifSubs.length} ders)</span></p>
-                    {sinifSubs.map(sub => (
-                <div key={sub.id} style={{ ...s.card, marginBottom:16 }}>
-                  {editingSubject===sub.id ? (
-                    <div style={{ marginBottom:14 }}>
-                      <p style={{ fontWeight:700, marginTop:0, fontSize:13, color:"#94a3b8" }}>Dersi Düzenle</p>
-                      <div style={{ display:"flex", gap:12, marginBottom:12, flexWrap:"wrap" }}>
-                        <input style={{ ...s.input, flex:2, minWidth:160 }} value={newSubjectName} onChange={e => setNewSubjectName(e.target.value)} placeholder="Ders adı" />
-                        <select style={{ ...s.input, flex:1, minWidth:120 }} value={newSubjectSinif} onChange={e => setNewSubjectSinif(e.target.value)}>{SINIFLAR.map(y => <option key={y}>{y}</option>)}</select>
-                        <div style={{ display:"flex", alignItems:"center", gap:8 }}><span style={{ fontSize:13, color:"#94a3b8" }}>Renk:</span><input type="color" value={newSubjectColor} onChange={e => setNewSubjectColor(e.target.value)} style={{ width:40, height:36, borderRadius:6, border:"1px solid rgba(148,163,184,0.15)", cursor:"pointer", padding:2 }} /></div>
-                      </div>
-                      <div style={{ display:"flex", gap:10 }}>
-                        <button style={s.btn(true)} onClick={() => { if (!newSubjectName.trim()) return; setSubjects(p => p.map(x => x.id===sub.id?{ ...x, name:newSubjectName.trim(), sinif:newSubjectSinif, color:newSubjectColor }:x)); setEditingSubject(null); }}>Kaydet</button>
-                        <button style={s.btn(false)} onClick={() => setEditingSubject(null)}>İptal</button>
-                      </div>
-                    </div>
-                  ) : (
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:10 }}><span style={{ width:12, height:12, borderRadius:"50%", background:sub.color, display:"inline-block" }}></span><span style={{ fontWeight:700, fontSize:16 }}>{sub.name}</span><span style={s.tag}>{sub.sinif}</span></div>
-                    <div style={{ display:"flex", gap:8 }}>
-                      <button style={{ ...s.btn(false), fontSize:12, padding:"6px 12px" }} onClick={() => { setEditingSubject(sub.id); setNewSubjectName(sub.name); setNewSubjectSinif(sub.sinif); setNewSubjectColor(sub.color); }}>✏️ Düzenle</button>
-                      <button style={{ ...s.btn(false), fontSize:12, padding:"6px 12px" }} onClick={() => { setNewTopicName(""); setNewTopicContent(""); setNewTopicSubjectId(sub.id); setEditingTopic("new"); }}>+ Konu Ekle</button>
-                      <button onClick={() => setSubjects(p => p.filter(x => x.id!==sub.id))} style={{ padding:"6px 12px", borderRadius:8, border:"1px solid rgba(255,82,82,0.3)", background:"transparent", color:"#ff5252", cursor:"pointer", fontSize:12 }}>Sil</button>
-                    </div>
-                  </div>
-                  )}
-                  {editingTopic==="new" && newTopicSubjectId===sub.id && (
-                    <div style={{ background:"rgba(12,18,34,0.4)", borderRadius:10, padding:14, marginBottom:12 }}>
-                      <input style={{ ...s.input, marginBottom:10 }} placeholder="Konu başlığı" value={newTopicName} onChange={e => setNewTopicName(e.target.value)} />
-                      <textarea value={newTopicContent} onChange={e => setNewTopicContent(e.target.value)} placeholder="Özet..." style={{ width:"100%", minHeight:100, padding:"10px 14px", border:"1px solid rgba(148,163,184,0.15)", borderRadius:8, fontSize:14, background:"rgba(16,24,44,0.6)", color:"#e8edf5", resize:"vertical", boxSizing:"border-box", fontFamily:"inherit" }} />
-                      <div style={{ display:"flex", gap:10, marginTop:10 }}>
-                        <button style={s.btn(true)} onClick={() => { if (!newTopicName.trim()) return; setSubjects(p => p.map(x => x.id===sub.id?{ ...x, topics:[...x.topics,{ id:Date.now(), name:newTopicName.trim(), content:newTopicContent }] }:x)); setEditingTopic(null); }}>Kaydet</button>
-                        <button style={s.btn(false)} onClick={() => setEditingTopic(null)}>İptal</button>
-                      </div>
-                    </div>
-                  )}
-                  {sub.topics.length===0 ? <p style={{ fontSize:13, color:"#64748b", margin:0 }}>Konu yok.</p>
-                    : sub.topics.map(t => (
-                      <div key={t.id} style={{ ...s.row, flexDirection:"column", alignItems:"stretch" }}>
-                        {editingTopic===t.id ? (
-                          <div style={{ background:"rgba(12,18,34,0.4)", borderRadius:10, padding:14 }}>
-                            <input style={{ ...s.input, marginBottom:10 }} value={newTopicName} onChange={e => setNewTopicName(e.target.value)} placeholder="Konu başlığı" />
-                            <textarea value={newTopicContent} onChange={e => setNewTopicContent(e.target.value)} placeholder="Özet içeriği..." style={{ width:"100%", minHeight:140, padding:"10px 14px", border:"1px solid rgba(148,163,184,0.15)", borderRadius:8, fontSize:14, background:"rgba(16,24,44,0.6)", color:"#e8edf5", resize:"vertical", boxSizing:"border-box", fontFamily:"inherit", lineHeight:1.7 }} />
-                            <div style={{ display:"flex", gap:10, marginTop:10 }}>
-                              <button style={s.btn(true)} onClick={() => { if (!newTopicName.trim()) return; setSubjects(p => p.map(x => x.id===sub.id?{ ...x, topics:x.topics.map(tp => tp.id===t.id?{ ...tp, name:newTopicName.trim(), content:newTopicContent }:tp) }:x)); setEditingTopic(null); }}>Kaydet</button>
-                              <button style={s.btn(false)} onClick={() => setEditingTopic(null)}>İptal</button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                            <div style={{ flex:1, minWidth:0 }}><p style={{ margin:"0 0 2px", fontWeight:600, fontSize:14 }}>{t.name}</p><p style={{ margin:0, fontSize:12, color:"#94a3b8", maxWidth:500, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{t.content}</p></div>
-                            <div style={{ display:"flex", gap:6, flexShrink:0 }}>
-                              <button disabled={summaryLoading===t.id} onClick={() => { setSummaryTarget({ subId:sub.id, topicId:t.id }); setTimeout(() => summaryPdfRef.current?.click(), 50); }} style={{ padding:"5px 10px", borderRadius:6, border:"1px solid rgba(0,230,118,0.3)", background: summaryLoading===t.id ? "#f0fdf4" : "transparent", color:"#00e676", cursor:"pointer", fontSize:12, opacity: summaryLoading===t.id ? 0.6 : 1 }}>{summaryLoading===t.id ? "⏳ Özetleniyor..." : "📄 PDF'den Özet"}</button>
-                              <button onClick={() => { setEditingTopic(t.id); setNewTopicName(t.name); setNewTopicContent(t.content); }} style={{ padding:"5px 10px", borderRadius:6, border:"1px solid rgba(0,212,170,0.3)", background:"transparent", color:"#00d4aa", cursor:"pointer", fontSize:12 }}>Düzenle</button>
-                              <button onClick={() => setSubjects(p => p.map(x => x.id===sub.id?{ ...x, topics:x.topics.filter(tp => tp.id!==t.id) }:x))} style={{ padding:"5px 10px", borderRadius:6, border:"1px solid rgba(255,82,82,0.3)", background:"transparent", color:"#ff5252", cursor:"pointer", fontSize:12 }}>Sil</button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              ))}
-                  </div>
-                );
-              })}
-              <input ref={summaryPdfRef} type="file" accept=".pdf" style={{ display:"none" }} onChange={e => { const f=e.target.files[0]; if (f) handleSummaryPdf(f); e.target.value=""; }} />
-            </>
-          )}
-          {adminPage==="admin_sources" && (
-            <>
-              <p style={s.title}>Kaynaklar</p>
-              {subjects.map(sub => (
-                <div key={sub.id} style={{ ...s.card, marginBottom:16 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
-                    <span style={{ width:12, height:12, borderRadius:"50%", background:sub.color, display:"inline-block" }}></span>
-                    <span style={{ fontWeight:700, fontSize:16 }}>{sub.name}</span>
-                    <span style={s.tag}>{sources.filter(src => src.subjectId===sub.id).length} kaynak</span>
-                  </div>
-                  {sub.topics.length===0 ? <p style={{ fontSize:13, color:"#64748b", margin:0 }}>Alt konu yok.</p>
-                    : sub.topics.map(topic => {
-                        const topicSources = sources.filter(src => src.subjectId===sub.id&&src.topicId===topic.id);
-                        const isAdding = editingSource!==null&&editingSource.subjectId===sub.id&&editingSource.topicId===topic.id;
-                        return (
-                          <div key={topic.id} style={{ border:"1px solid rgba(148,163,184,0.12)", borderRadius:12, padding:"12px 16px", marginBottom:10 }}>
-                            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:isAdding||topicSources.length>0?12:0 }}>
-                              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                                <span style={{ fontWeight:600, fontSize:14 }}>{topic.name}</span>
-                                {topicSources.length>0 && <span style={{ fontSize:11, padding:"2px 7px", borderRadius:8, background:"rgba(59,130,246,0.1)", color:"#40c4ff", fontWeight:600 }}>{topicSources.length} kaynak</span>}
-                              </div>
-                              <button style={{ ...s.btn(isAdding), fontSize:12, padding:"5px 12px" }}
-                                onClick={() => { if (isAdding) { setEditingSource(null); } else { setNewSourceName(""); setNewSourceType("Kitap"); setNewSourceUrl(""); setEditingSource({ subjectId:sub.id, topicId:topic.id }); } }}>
-                                {isAdding?"İptal":"+ Kaynak Ekle"}
-                              </button>
-                            </div>
-                            {isAdding && (
-                              <div style={{ background:"rgba(12,18,34,0.4)", borderRadius:10, padding:14, marginBottom:12, border:"1px solid rgba(148,163,184,0.15)" }}>
-                                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:10 }}>
-                                  <div><p style={{ fontSize:12, color:"#94a3b8", margin:"0 0 5px", fontWeight:600 }}>Kaynak Adı</p><input style={s.input} placeholder="örn. Gray's Anatomy" value={newSourceName} onChange={e => setNewSourceName(e.target.value)} /></div>
-                                  <div><p style={{ fontSize:12, color:"#94a3b8", margin:"0 0 5px", fontWeight:600 }}>Tür</p><select style={s.input} value={newSourceType} onChange={e => setNewSourceType(e.target.value)}>{["Kitap","Makale","Video","Web Sitesi","Diğer"].map(t => <option key={t}>{t}</option>)}</select></div>
-                                  <div style={{ gridColumn:"1/-1" }}><p style={{ fontSize:12, color:"#94a3b8", margin:"0 0 5px", fontWeight:600 }}>URL</p><input style={s.input} placeholder="https://..." value={newSourceUrl} onChange={e => setNewSourceUrl(e.target.value)} /></div>
-                                </div>
-                                <button style={s.btn(true)} onClick={() => { if (!newSourceName.trim()) return; setSources(p => [...p,{ id:Date.now(), name:newSourceName.trim(), type:newSourceType, subjectId:sub.id, topicId:topic.id, url:newSourceUrl, addedAt:new Date().toLocaleDateString("tr-TR") }]); setEditingSource(null); }}>Kaydet</button>
-                              </div>
-                            )}
-                            {topicSources.map(src => (
-                              <div key={src.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 10px", borderRadius:8, background:"rgba(12,18,34,0.4)", border:"1px solid rgba(148,163,184,0.12)", marginBottom:6 }}>
-                                <div><span style={{ fontWeight:600, fontSize:13 }}>{src.name}</span><div style={{ display:"flex", gap:6, marginTop:3 }}><span style={{ ...s.tag, fontSize:11 }}>{src.type}</span>{src.url&&<a href={src.url} target="_blank" style={{ fontSize:12, color:"#00d4aa" }}>Bağlantı</a>}<span style={{ fontSize:11, color:"#64748b" }}>{src.addedAt}</span></div></div>
-                                <button onClick={() => setSources(p => p.filter(x => x.id!==src.id))} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid rgba(255,82,82,0.3)", background:"transparent", color:"#ff5252", cursor:"pointer", fontSize:12 }}>Sil</button>
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      })
-                  }
-                </div>
-              ))}
-            </>
-          )}
-          {adminPage==="admin_schedule" && <AdminSchedule schedules={schedules} setSchedules={setSchedules} practiceSchedules={practiceSchedules} setPracticeSchedules={setPracticeSchedules} sheetUrls={sheetUrls} setSheetUrls={setSheetUrls} s={s} />}
-          {adminPage==="admin_questions" && <AdminQuestions subjects={subjects} questions={questions} setQuestions={setQuestions} s={s} />}
           {adminPage==="admin_exams" && (
             <>
               <p style={s.title}>Sınav Tarihleri</p>
