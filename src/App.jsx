@@ -4135,12 +4135,12 @@ export default function App() {
   const [authGroup, setAuthGroup] = useState("Grup A");
   const [authUni, setAuthUni] = useState(""); const [authError, setAuthError] = useState("");
   const [adminPass, setAdminPass] = useState(""); const [adminError, setAdminError] = useState("");
-  const [schedules, setSchedules] = useState({});
-  const [practiceSchedules, setPracticeSchedules] = useState({});
-  const [sheetUrls, setSheetUrls] = useState({});
-  const [examDates, setExamDates] = useState({});
+  const [schedules, setSchedules] = useState(() => { try { const d = localStorage.getItem("capapp_schedules"); if (d) return JSON.parse(d); } catch(e) {} return {}; });
+  const [practiceSchedules, setPracticeSchedules] = useState(() => { try { const d = localStorage.getItem("capapp_practiceSchedules"); if (d) return JSON.parse(d); } catch(e) {} return {}; });
+  const [sheetUrls, setSheetUrls] = useState(() => { try { const d = localStorage.getItem("capapp_sheetUrls"); if (d) return JSON.parse(d); } catch(e) {} return {}; });
+  const [examDates, setExamDates] = useState(() => { try { const d = localStorage.getItem("capapp_examDates"); if (d) return JSON.parse(d); } catch(e) {} return {}; });
   const [subjects, setSubjects] = useState(INIT_SUBJECTS);
-  const [sources, setSources] = useState([]);
+  const [sources, setSources] = useState(() => { try { const d = localStorage.getItem("capapp_sources"); if (d) return JSON.parse(d); } catch(e) {} return []; });
   const [questions, setQuestions] = useState(INIT_QUESTIONS);
   const [page, setPage] = useState("dashboard");
   const [adminPage, setAdminPage] = useState("admin_dashboard");
@@ -4207,6 +4207,11 @@ export default function App() {
   useEffect(() => { try { if (user) localStorage.setItem("capapp_current_user", JSON.stringify(user)); else localStorage.removeItem("capapp_current_user"); } catch(e) {} }, [user]);
   useEffect(() => { try { localStorage.setItem("capapp_userStats", JSON.stringify(userStats)); } catch(e) {} }, [userStats]);
   useEffect(() => { try { localStorage.setItem("capapp_userDecks", JSON.stringify(userDecks)); } catch(e) {} }, [userDecks]);
+  useEffect(() => { try { localStorage.setItem("capapp_schedules", JSON.stringify(schedules)); } catch(e) {} }, [schedules]);
+  useEffect(() => { try { localStorage.setItem("capapp_practiceSchedules", JSON.stringify(practiceSchedules)); } catch(e) {} }, [practiceSchedules]);
+  useEffect(() => { try { localStorage.setItem("capapp_sheetUrls", JSON.stringify(sheetUrls)); } catch(e) {} }, [sheetUrls]);
+  useEffect(() => { try { localStorage.setItem("capapp_examDates", JSON.stringify(examDates)); } catch(e) {} }, [examDates]);
+  useEffect(() => { try { localStorage.setItem("capapp_sources", JSON.stringify(sources)); } catch(e) {} }, [sources]);
 
   async function handleSummaryPdf(file) {
     if (!file || !summaryTarget) return;
